@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MLB Baseball Season Wins Chart Generator</title>
+  <meta charset="utf-8">
+  <meta name="description" content="MLB Baseball Season Wins Chart Generator">
+  <meta name="author" content="Tim Moriarty">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>MLB Baseball Season Wins Chart Generator</h1>
+    <h2></h2>
+    <p>Tim Moriarty<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>MLB Wins Chart Generator</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>MLB is American Major League Baseball.  It currently consists of 30 active teams that play a 162 game regular season every year.</p>
+
+<p>It uses Shiny to provide a user interface and a web application framework.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Season wins since 1970</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This application will allow the user to generate a line chart of season wins for a chosen MLB team.  It will chart data since 1970, if available.  It will chart until 2015, if available.</p>
+
+<p>Some reasons data might not be available include a franchise not existing until a year after 1970 or a franchise changing names / locations.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>The Lahman package</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This application uses dat from the Lahman package.  The package provides the tables from Sean Lahman&#39;s Baseball Database as a set of R data.frames.
+It uses the data on pitching, hitting and fielding performance and other tables from 1871 through 2014, as recorded in the 2015 version of the database.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>The Lahman package - loading</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Using the Lahman package is quite easy.  You have to install it and load in into your R environment.</p>
+
+<pre><code class="r">install.packages(&quot;Lahman&quot;)
+library(&quot;Lahman&quot;)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>The Lahman package  - Teams</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>I&#39;m using the Teams Data Frame from the Lahman package in this application.  It has a great deal of team related data, including the number of wins for each team for each MLB season.</p>
+
+<pre><code class="r">str(Teams)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    2775 obs. of  48 variables:
+##  $ yearID        : int  1871 1871 1871 1871 1871 1871 1871 1871 1871 1872 ...
+##  $ lgID          : Factor w/ 7 levels &quot;AA&quot;,&quot;AL&quot;,&quot;FL&quot;,..: 4 4 4 4 4 4 4 4 4 4 ...
+##  $ teamID        : Factor w/ 149 levels &quot;ALT&quot;,&quot;ANA&quot;,&quot;ARI&quot;,..: 24 31 39 56 90 97 111 136 142 8 ...
+##  $ franchID      : Factor w/ 120 levels &quot;ALT&quot;,&quot;ANA&quot;,&quot;ARI&quot;,..: 13 36 25 56 70 85 91 109 77 9 ...
+##  $ divID         : chr  NA NA NA NA ...
+##  $ Rank          : int  3 2 8 7 5 1 9 6 4 2 ...
+##  $ G             : int  31 28 29 19 33 28 25 29 32 58 ...
+##  $ Ghome         : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ W             : int  20 19 10 7 16 21 4 13 15 35 ...
+##  $ L             : int  10 9 19 12 17 7 21 15 15 19 ...
+##  $ DivWin        : chr  NA NA NA NA ...
+##  $ WCWin         : chr  NA NA NA NA ...
+##  $ LgWin         : chr  &quot;N&quot; &quot;N&quot; &quot;N&quot; &quot;N&quot; ...
+##  $ WSWin         : chr  NA NA NA NA ...
+##  $ R             : int  401 302 249 137 302 376 231 351 310 617 ...
+##  $ AB            : int  1372 1196 1186 746 1404 1281 1036 1248 1353 2576 ...
+##  $ H             : int  426 323 328 178 403 410 274 384 375 747 ...
+##  $ X2B           : int  70 52 35 19 43 66 44 51 54 94 ...
+##  $ X3B           : int  37 21 40 8 21 27 25 34 26 35 ...
+##  $ HR            : int  3 10 7 2 1 9 3 6 6 14 ...
+##  $ BB            : int  60 60 26 33 33 46 38 49 48 27 ...
+##  $ SO            : int  19 22 25 9 15 23 30 19 13 28 ...
+##  $ SB            : int  73 69 18 16 46 56 53 62 48 35 ...
+##  $ CS            : int  NA NA NA NA NA NA NA NA NA 15 ...
+##  $ HBP           : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ SF            : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ RA            : int  303 241 341 243 313 266 287 362 303 434 ...
+##  $ ER            : int  109 77 116 97 121 137 108 153 137 173 ...
+##  $ ERA           : num  3.55 2.76 4.11 5.17 3.72 4.95 4.3 5.51 4.37 3.02 ...
+##  $ CG            : int  22 25 23 19 32 27 23 28 32 48 ...
+##  $ SHO           : int  1 0 0 1 1 0 1 0 0 1 ...
+##  $ SV            : int  3 1 0 0 0 0 0 0 0 1 ...
+##  $ IPouts        : int  828 753 762 507 879 747 678 750 846 1545 ...
+##  $ HA            : int  367 308 346 261 373 329 315 431 371 566 ...
+##  $ HRA           : int  2 6 13 5 7 3 3 4 4 3 ...
+##  $ BBA           : int  42 28 53 21 42 53 34 75 45 63 ...
+##  $ SOA           : int  23 22 34 17 22 16 16 12 13 0 ...
+##  $ E             : int  225 218 223 163 227 194 220 198 217 432 ...
+##  $ DP            : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ FP            : num  0.83 0.82 0.81 0.8 0.83 0.84 0.82 0.84 0.85 0.82 ...
+##  $ name          : chr  &quot;Boston Red Stockings&quot; &quot;Chicago White Stockings&quot; &quot;Cleveland Forest Citys&quot; &quot;Fort Wayne Kekiongas&quot; ...
+##  $ park          : chr  &quot;South End Grounds I&quot; &quot;Union Base-Ball Grounds&quot; &quot;National Association Grounds&quot; &quot;Hamilton Field&quot; ...
+##  $ attendance    : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ BPF           : int  103 104 96 101 90 102 97 101 94 106 ...
+##  $ PPF           : int  98 102 100 107 88 98 99 100 98 102 ...
+##  $ teamIDBR      : chr  &quot;BOS&quot; &quot;CHI&quot; &quot;CLE&quot; &quot;KEK&quot; ...
+##  $ teamIDlahman45: chr  &quot;BS1&quot; &quot;CH1&quot; &quot;CL1&quot; &quot;FW1&quot; ...
+##  $ teamIDretro   : chr  &quot;BS1&quot; &quot;CH1&quot; &quot;CL1&quot; &quot;FW1&quot; ...
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Baseball Wins Chart Generator - Wrapup</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>I am using the plot command from the Base package to generate the line charts.</p>
+
+<p>You can find more about Lahman package at the following web address. <a href="https://cran.r-project.org/web/packages/Lahman/">https://cran.r-project.org/web/packages/Lahman/</a>)</p>
+
+<p>Its great for baseball analysis.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='MLB Wins Chart Generator'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Season wins since 1970'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='The Lahman package'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='The Lahman package - loading'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='The Lahman package  - Teams'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Baseball Wins Chart Generator - Wrapup'>
+         6
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

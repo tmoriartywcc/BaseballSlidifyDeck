@@ -1,0 +1,67 @@
+---
+title       : MLB Baseball Season Wins Chart Generator
+subtitle    : 
+author      : Tim Moriarty
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## MLB Wins Chart Generator
+
+MLB is American Major League Baseball.  It currently consists of 30 active teams that play a 162 game regular season every year.
+
+It uses Shiny to provide a user interface and a web application framework.
+
+
+--- .class #id 
+
+## Season wins since 1970
+
+This application will allow the user to generate a line chart of season wins for a chosen MLB team.  It will chart data since 1970, if available.  It will chart until 2015, if available.
+
+Some reasons data might not be available include a franchise not existing until a year after 1970 or a franchise changing names / locations.
+
+--- .class #id 
+
+## The Lahman package
+
+This application uses dat from the Lahman package.  The package provides the tables from Sean Lahman's Baseball Database as a set of R data.frames.
+It uses the data on pitching, hitting and fielding performance and other tables from 1871 through 2014, as recorded in the 2015 version of the database.
+
+--- .class #id 
+
+## The Lahman package - loading
+
+Using the Lahman package is quite easy.  You have to install it and load in into your R environment.
+
+
+```{R, echo=TRUE, results='hide'}
+install.packages("Lahman")
+library("Lahman")
+```
+
+--- .class #id 
+
+## The Lahman package  - Teams
+
+I'm using the Teams Data Frame from the Lahman package in this application.  It has a great deal of team related data, including the number of wins for each team for each MLB season.
+
+```{R}
+str(Teams)
+```
+
+--- .class #id 
+
+## Baseball Wins Chart Generator - Wrapup
+
+
+I am using the plot command from the Base package to generate the line charts.
+
+You can find more about Lahman package at the following web address. https://cran.r-project.org/web/packages/Lahman/)
+
+Its great for baseball analysis.
